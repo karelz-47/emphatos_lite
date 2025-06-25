@@ -55,39 +55,32 @@ def run_llm(messages, api_key):
 # ──────────────────────────────────────────────────────────────
 def copy_button(text: str, key: str, label: str = "Copy") -> None:
     """
-    Render a Streamlit-styled button that copies *text* to clipboard.
-    - *text*    : string to copy
-    - *key*     : unique element id
-    - *label*   : button label (default “Copy”)
+    Render a Streamlit-styled white button that copies *text* to clipboard.
     """
-    escaped = json.dumps(text)          # safe JS string
+    escaped = json.dumps(text)                # safe JS string
 
     html(f"""
     <style>
-      /* one-off style; prefix id to avoid leaking to other buttons */
       #{key} {{
         all: unset;
         display: inline-flex;
         align-items: center;
-        gap: .35rem;
-        padding: .25rem .75rem;
+        gap: .4rem;
+        padding: .3rem .9rem;
         font-size: .875rem;
         border-radius: .5rem;
         border: 1px solid rgba(49,51,63,.2);
-        background: rgb(240,242,246);          /* matches download_button */
+        background: #fff;                     /* white like download btn */
         cursor: pointer;
         transition: background .15s;
+        margin-left: .5rem;                   /* little gap from download */
       }}
-      #{key}:hover {{
-        background: rgb(230,232,236);
-      }}
-      #{key}:active {{
-        background: rgb(210,212,216);
-      }}
+      #{key}:hover   {{ background: #f8f9fa; }}
+      #{key}:active  {{ background: #eceef1; }}
     </style>
 
     <button id="{key}" title="Copy to clipboard">
-      📋 <span>{label}</span>
+        📋 <span>{label}</span>
     </button>
 
     <script>
@@ -286,7 +279,7 @@ if st.session_state.reviewed_draft:
 
     # Download button
     st.download_button(
-        "📥 Download final reply",
+        "📥 Download as txt",
         st.session_state.reviewed_draft,
         file_name="empathos_reply.txt",
         mime="text/plain",
@@ -294,10 +287,10 @@ if st.session_state.reviewed_draft:
 
     # NEW: clipboard button right next to it
     copy_button(
-        st.session_state.reviewed_draft,
-        label="",               # no extra label text → icon only
-        key="copy_draft_btn",
-    )
+             st.session_state.reviewed_draft,
+             key="copy_draft_btn",
+            label="Copy into clipboard",          # you can localise this if needed
+        )
 
     st.markdown("---")
 
@@ -349,7 +342,7 @@ if st.session_state.reviewed_draft:
         st.text_area("Translation", value=st.session_state.reviewed_translation, height=220)
         
         st.download_button(
-            "📥 Download translated reply",
+            "📥 Download as txt",
             st.session_state.reviewed_translation,
             file_name="empathos_reply_translated.txt",
             mime="text/plain",
@@ -358,8 +351,8 @@ if st.session_state.reviewed_draft:
         # NEW clipboard for translation
         copy_button(
             st.session_state.reviewed_translation,
-            label="",
             key="copy_translation_btn",
+            label="Copy into clipboard",          # you can localise this if needed
         )
 
 # ──────────────────────────────────────────────────────────────
