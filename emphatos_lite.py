@@ -29,7 +29,7 @@ DEFAULT_PROMPT = (
     "1. Write a complete reply to the customer even if some details are missing.\n"
     "2. Whenever you must infer a fact, prefix it with ASSUMPTION: in one sentence.\n"
     "3. Length: ≤ 250 words.\n"
-    "4. Voice: warm, empathic, strictly factual, using unit‑linked insurance terminology appropriately.\n"
+    "4. Voice: warm, empathic, strictly factual, using insurance terminology appropriately if needed.\n"
     "5. At the end of your reply, include exactly this signature (do not alter it):\n"
     "{signature}\n"
     "6. **Return only the final reply text** – no lists, no meta‑commentary."
@@ -60,6 +60,7 @@ _defaults = {
     "reviewed_translation": "",
     "operator_notes": "",
     "signature": "",
+    "client_review": "",          
     "messages": [],            # raw LLM message history for debugging
     "api_log": []
 }
@@ -79,6 +80,7 @@ st.text_area(
 
 client_review = st.text_area(
     "Customer message or review",
+    key="client_review",                    
     placeholder="Paste the customer's text here",
     height=140,
 )
@@ -104,7 +106,7 @@ def clear_state(preserve: bool = False) -> None:
 
     for k in (
         "stage", "draft", "reviewed_draft", "translation", "reviewed_translation",
-        "messages", "api_log", "signature", "operator_notes",
+        "messages", "api_log", "signature", "operator_notes", "client_review",
     ):
         st.session_state.pop(k, None)        # remove the key entirely
 
@@ -262,7 +264,7 @@ if st.session_state.reviewed_draft:
                     "role": "system",
                     "content": (
                         "You are a meticulous supervisor reviewing the translated reply.\n"
-                        "Polish wording for accuracy and tone. Return only the final translation, nothing else."
+                        "Improve wording for accuracy and tone. Return only the final translation, nothing else."
                     ),
                 },
                 {"role": "user", "content": st.session_state.translation},
