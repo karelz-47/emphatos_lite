@@ -1,6 +1,7 @@
 import json
 import streamlit as st
 from openai import OpenAI
+from streamlit.components.v1 import html
 
 # ──────────────────────────────────────────────────────────────
 # App meta
@@ -48,6 +49,41 @@ def run_llm(messages, api_key):
         max_tokens=650,
     )
     return resp.choices[0].message.content.strip()
+
+# ──────────────────────────────────────────────────────────────
+# Helper – clipboard button (pure front-end)
+# ──────────────────────────────────────────────────────────────
+from streamlit.components.v1 import html
+import json                         # already imported above, but kept for clarity
+
+def copy_button(text: str, label: str, key: str) -> None:
+    """
+    Render a standalone 📋 button that copies *text* to clipboard.
+    Appears exactly where the function is called.
+    """
+    escaped = json.dumps(text)      # safe JS string
+    html(
+        f"""
+        <button id="{key}" style="
+            border:none;
+            background:transparent;
+            cursor:pointer;
+            font-size:1rem;
+            margin-left:0.5rem;
+        " title="Copy to clipboard">📋 {label}</button>
+        <script>
+        const btn = document.getElementById("{key}");
+        btn.addEventListener('click', () => {{
+            navigator.clipboard.writeText({escaped});
+            const original = btn.textContent;
+            btn.textContent = '✅ Copied';
+            setTimeout(() => btn.textContent = original, 1200);
+        }});
+        </script>
+        """,
+        height=28,
+    )
+
 
 # ──────────────────────────────────────────────────────────────
 # Session‑state bootstrap
@@ -227,9 +263,6 @@ if st.session_state.reviewed_draft:
     st.header("Draft Answer")
     st.text_area("Draft", value=st.session_state.reviewed_draft, height=220)
 
-    # 📋 one-click copy (read-only)
-    st.code(st.session_state.reviewed_draft, language=None)      # adds Streamlit copy icon
-    
     wc = len(st.session_state.reviewed_draft.split())
     st.caption(f"Word count: {wc} / 250")
 
@@ -239,6 +272,13 @@ if st.session_state.reviewed_draft:
         st.session_state.reviewed_draft,
         file_name="empathos_reply.txt",
         mime="text/plain",
+    )
+
+    # NEW: clipboard button right next to it
+    copy_button(
+        st.session_state.reviewed_draft,
+        label="",               # no extra label text → icon only
+        key="copy_draft_btn",
     )
 
     st.markdown("---")
@@ -289,13 +329,19 @@ if st.session_state.reviewed_draft:
     if st.session_state.reviewed_translation:
         st.header("Translated Answer")
         st.text_area("Translation", value=st.session_state.reviewed_translation, height=220)
-        # 📋 one-click copy (read-only)
-        st.code(st.session_state.reviewed_translation, language=None)   # adds Streamlit copy icon
+        
         st.download_button(
             "📥 Download translated reply",
             st.session_state.reviewed_translation,
             file_name="empathos_reply_translated.txt",
             mime="text/plain",
+        )
+
+        # NEW clipboard for translation
+        copy_button(
+            st.session_state.reviewed_translation,
+            label="",
+            key="copy_translation_btn",
         )
 
 # ──────────────────────────────────────────────────────────────
