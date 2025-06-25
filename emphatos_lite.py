@@ -115,6 +115,7 @@ def log_run_llm(messages, api_key, functions=None, function_call="auto"):
 # Initialize session state
 # ----------------------------------------------------------------------
 def init_state():
+    MODE = "Advanced"
     defaults = {
         "stage": "init",            # init, asked, done, reviewed, translated, reviewed_translation
         "questions": [],            # list of strings
@@ -140,17 +141,7 @@ init_state()
 # UI Inputs
 # ----------------------------------------------------------------------
 
-# (1) Enable/disable function-calling (Advanced only)
-use_functions = st.checkbox("Enable function-calling (Advanced only)", value=True)
-st.session_state.use_functions = use_functions
-
-# (2) Reply style selector
-tone = st.selectbox(
-    "Reply style",
-    ["Empathic", "Concise", "Detailed", "Strictly professional"],
-    index=0
-)
-st.session_state.tone = tone
+st.session_state.use_functions = True # always on, UI removed
 
 # (3) Signature input
 st.text_area(
@@ -161,10 +152,8 @@ st.text_area(
 )
 
 # (4) Auto-detect & translate customer message
-detect_translate = st.checkbox("Auto-detect customer language and translate to English", key="auto_detect")
 
 # (5) Interface mode: Simple vs. Advanced
-st.radio("Interface mode", ["Simple", "Advanced"], key="mode", horizontal=True)
 
 # (6) Customer message / review (always editable)
 client_review = st.text_area(
@@ -235,9 +224,7 @@ if st.button("Generate response draft", key="btn_generate"):
         st.error("Please provide the customer text and an API key.")
     else:
         # (A) If auto-detect is on, translate the incoming review into English first
-        if detect_translate:
-            try:
-                detect_prompt = (
+         detect_prompt = (
                     "You are a translation assistant. Detect the language of the following text, "
                     "then translate it into English. Return only the English translation."
                 )
@@ -252,9 +239,7 @@ if st.button("Generate response draft", key="btn_generate"):
             except Exception as e:
                 st.error(f"❌ OpenAI API error (translation): {e}")
                 st.stop()
-        else:
-            client_review_en = client_review
-
+       
         # (B) Build channel‐specific instructions
         if st.session_state.channel_type == "Email (private)":
             channel_instr = (
@@ -268,7 +253,7 @@ if st.button("Generate response draft", key="btn_generate"):
                 "concise, maintain brand voice, end with a call-to-action if appropriate."
             )
 
-        mode = st.session_state.mode
+        mode = MODE
         signature = st.session_state.signature.strip() or "(No signature provided)"
 
         # ─── SIMPLE MODE ────────────────────────────────────────────────
@@ -277,7 +262,7 @@ if st.button("Generate response draft", key="btn_generate"):
                 f"{channel_instr}\n"
                 "You are Empathos, a seasoned life-insurance-support assistant.\n"
                 "Use professional unit-linked insurance terminology; ensure it sounds natural for native speakers with a background in unit-linked insurance.\n"
-                f"Style: {st.session_state.tone}\n"
+                f"Style: Empathic\n"
                 "Customer review (verbatim):\n"
                 f"{client_review_en}\n\n"
                 "Operator notes:\n"
@@ -563,7 +548,6 @@ if st.session_state.reviewed_draft:
                     st.session_state[k] = ""
                 else:
                     st.session_state[k] = [] if isinstance(st.session_state[k], list) else {}
-            st.session_state.mode = "Simple"
             st.stop()
 
     # (5) Download final reply
