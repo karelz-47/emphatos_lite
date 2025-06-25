@@ -95,22 +95,40 @@ st.radio("Response channel", ["Email (private)", "Public post"], key="channel_ty
 api_key = st.text_input("OpenAI API key", type="password")
 
 # ──────────────────────────────────────────────────────────────
+# Helper – safe Session-State reset
+# ──────────────────────────────────────────────────────────────
+def clear_state(preserve: bool = False) -> None:
+    """Reset all fields; optionally keep signature & notes."""
+    saved_sig   = st.session_state.get("signature", "")
+    saved_notes = st.session_state.get("operator_notes", "")
+
+    for k in (
+        "stage", "draft", "reviewed_draft", "translation", "reviewed_translation",
+        "messages", "api_log", "signature", "operator_notes",
+    ):
+        st.session_state.pop(k, None)        # remove the key entirely
+
+    if preserve:
+        st.session_state["signature"]      = saved_sig
+        st.session_state["operator_notes"] = saved_notes
+
+    st.session_state["stage"] = "init"      # fresh start
+
+
+# ──────────────────────────────────────────────────────────────
 # Controls – Clear form
 # ──────────────────────────────────────────────────────────────
 
-st.markdown("---")
-keep_info = st.checkbox("Keep signature and notes when clearing", key="keep_info")
-if st.button("Clear fields / Start new task", key="btn_clear"):
-    saved_sig = st.session_state.signature if keep_info else ""
-    saved_notes = st.session_state.operator_notes if keep_info else ""
-    for k in [
-        "stage", "draft", "reviewed_draft", "translation", "reviewed_translation",
-        "messages", "api_log", "operator_notes", "signature",
-    ]:
-        st.session_state[k] = ""
-    st.session_state.signature = saved_sig
-    st.session_state.operator_notes = saved_notes
-    st.stop()
+keep_info = st.checkbox(
+    "Keep signature and notes when clearing", key="keep_info"
+)
+
+st.button(
+    "Clear fields / Start new task",
+    key="btn_clear",
+    on_click=clear_state,          # ← call helper BEFORE next rerun
+    kwargs={"preserve": keep_info},
+)
 
 st.markdown("---")
 
