@@ -116,7 +116,6 @@ def log_run_llm(messages, api_key, functions=None, function_call="auto"):
 # Initialize session state
 # ----------------------------------------------------------------------
 def init_state():
-    MODE = APP_MODE
     defaults = {
         "stage": "init",            # init, asked, done, reviewed, translated, reviewed_translation
         "questions": [],            # list of strings
@@ -125,7 +124,6 @@ def init_state():
         "reviewed_draft": "",
         "translation": "",
         "reviewed_translation": "",
-        "mode": "Simple",           # "Simple" or "Advanced"
         "operator_notes": "",
         "signature": "",            # operator’s personal signature line
         "messages": [],             # full chat history
@@ -255,7 +253,7 @@ if st.button("Generate response draft", key="btn_generate"):
                 "concise, maintain brand voice, end with a call-to-action if appropriate."
             )
 
-        mode = MODE
+        mode = APP_MODE
         signature = st.session_state.signature.strip() or "(No signature provided)"
 
         # ─── SIMPLE MODE ────────────────────────────────────────────────
