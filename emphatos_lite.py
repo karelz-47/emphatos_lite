@@ -263,8 +263,9 @@ if st.session_state.reviewed_draft:
                 {
                     "role": "system",
                     "content": (
-                        "You are a meticulous supervisor reviewing the translated reply.\n"
-                        "Improve wording for accuracy and tone. Return only the final translation, nothing else."
+                        "You are a meticulous supervisor reviewing the translated reply in\n"
+                        f"{tgt} language. Improve wording for accuracy and tone. \n"
+                        "Return only the improved version, nothing else. You must not change the language."
                     ),
                 },
                 {"role": "user", "content": st.session_state.translation},
