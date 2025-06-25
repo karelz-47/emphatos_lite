@@ -55,43 +55,49 @@ def run_llm(messages, api_key):
 # ──────────────────────────────────────────────────────────────
 def copy_button(text: str, key: str, label: str = "Copy into clipboard") -> None:
     """
-    Streamlit-styled white button that copies *text* to clipboard.
+    Render a pill-shaped 📋 button (same font/style as Streamlit buttons)
+    that copies *text* to clipboard.
     """
     escaped = json.dumps(text)
-    html(f"""
-    <style>
-      #{key} {{
-        font: inherit;                       /* ← same family & weight */
-        display: inline-flex;
-        align-items: center;
-        gap: .4rem;
-        padding: .3rem .9rem;
-        font-size: .875rem;
-        border-radius: .5rem;
-        border: 1px solid rgba(49,51,63,.2);
-        background: #fff;
-        cursor: pointer;
-        transition: background .15s;
-      }}
-      #{key}:hover  {{ background: #f8f9fa; }}
-      #{key}:active {{ background: #eceef1; }}
-    </style>
 
-    <button id="{key}" title="Copy to clipboard">
-        📋 <span>{label}</span>
-    </button>
+    st.markdown(
+        f"""
+        <button id="{key}" class="copy-btn">
+            📋 {label}
+        </button>
 
-    <script>
-      const btn = document.getElementById("{key}");
-      btn.addEventListener('click', () => {{
-          navigator.clipboard.writeText({escaped});
-          const span = btn.querySelector('span');
-          const original = span.textContent;
-          span.textContent = 'Copied';
-          setTimeout(() => span.textContent = original, 1200);
-      }});
-    </script>
-    """, height=36)
+        <script>
+        const btn_{key} = document.getElementById("{key}");
+        if (btn_{key}) {{
+            btn_{key}.onclick = () => {{
+                navigator.clipboard.writeText({escaped});
+                const original = btn_{key}.innerHTML;
+                btn_{key}.innerHTML = "✅ Copied";
+                setTimeout(() => btn_{key}.innerHTML = original, 1200);
+            }};
+        }}
+        </script>
+
+        <style>
+        /* one-off style hooked to this id only */
+        #{key}.copy-btn {{
+            font: inherit;                       /* same family/weight */
+            display: inline-flex;
+            align-items: center;
+            gap: .35rem;
+            padding: .3rem .9rem;
+            border-radius: .5rem;
+            border: 1px solid rgba(49,51,63,.2);
+            background: #fff;                    /* white pill */
+            cursor: pointer;
+            transition: background .15s;
+        }}
+        #{key}.copy-btn:hover  {{ background:#f8f9fa; }}
+        #{key}.copy-btn:active {{ background:#eceef1; }}
+        </style>
+        """,
+        unsafe_allow_html=True,
+    )
 
 
 # ──────────────────────────────────────────────────────────────
