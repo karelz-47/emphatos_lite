@@ -142,6 +142,12 @@ if st.button("Generate response draft", key="btn_generate"):
     if not client_review.strip() or not api_key:
         st.error("Please provide the customer text and an API key.")
     else:
+        # ★ Wipe any previous outputs so we always start fresh
+        for k in ("draft", "reviewed_draft", "translation", "reviewed_translation"):
+            st.session_state[k] = ""
+        st.session_state.stage    = "init"
+        st.session_state.messages = []           # clear old system prompt
+
         # 1. Translate customer input → English
         try:
             detect_prompt = (
