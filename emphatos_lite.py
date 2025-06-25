@@ -13,6 +13,7 @@ st.subheader("Your voice, their peace of mind")
 # ----------------------------------------------------------------------
 # Constants & function schemas
 # ----------------------------------------------------------------------
+APP_MODE = "Advanced"       # or "Simple" if you prefer
 LANGUAGE_OPTIONS = [
     "English", "Slovak", "Italian", "Icelandic",
     "Hungarian", "German", "Czech", "Polish", "Vulcan"
@@ -115,7 +116,7 @@ def log_run_llm(messages, api_key, functions=None, function_call="auto"):
 # Initialize session state
 # ----------------------------------------------------------------------
 def init_state():
-    MODE = "Advanced"
+    MODE = APP_MODE
     defaults = {
         "stage": "init",            # init, asked, done, reviewed, translated, reviewed_translation
         "questions": [],            # list of strings
@@ -224,21 +225,22 @@ if st.button("Generate response draft", key="btn_generate"):
         st.error("Please provide the customer text and an API key.")
     else:
         # (A) If auto-detect is on, translate the incoming review into English first
-         detect_prompt = (
+        try: 
+            detect_prompt = (
                     "You are a translation assistant. Detect the language of the following text, "
                     "then translate it into English. Return only the English translation."
-                )
-                resp = run_llm(
+            )
+            resp = run_llm(
                     [
                         {"role": "system", "content": detect_prompt},
                         {"role": "user", "content": client_review}
                     ],
                     api_key
-                )
-                client_review_en = resp.content.strip()
-            except Exception as e:
-                st.error(f"❌ OpenAI API error (translation): {e}")
-                st.stop()
+            )
+            client_review_en = resp.content.strip()
+        except Exception as e:
+            st.error(f"❌ OpenAI API error (translation): {e}")
+            st.stop()
        
         # (B) Build channel‐specific instructions
         if st.session_state.channel_type == "Email (private)":
