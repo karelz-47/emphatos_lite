@@ -53,36 +53,54 @@ def run_llm(messages, api_key):
 # ──────────────────────────────────────────────────────────────
 # Helper – clipboard button (pure front-end)
 # ──────────────────────────────────────────────────────────────
-from streamlit.components.v1 import html
-import json                         # already imported above, but kept for clarity
+def copy_button(text: str, key: str, label: str = "Copy") -> None:
+    """
+    Render a Streamlit-styled button that copies *text* to clipboard.
+    - *text*    : string to copy
+    - *key*     : unique element id
+    - *label*   : button label (default “Copy”)
+    """
+    escaped = json.dumps(text)          # safe JS string
 
-def copy_button(text: str, label: str, key: str) -> None:
-    """
-    Render a standalone 📋 button that copies *text* to clipboard.
-    Appears exactly where the function is called.
-    """
-    escaped = json.dumps(text)      # safe JS string
-    html(
-        f"""
-        <button id="{key}" style="
-            border:none;
-            background:transparent;
-            cursor:pointer;
-            font-size:1rem;
-            margin-left:0.5rem;
-        " title="Copy to clipboard">📋 {label}</button>
-        <script>
-        const btn = document.getElementById("{key}");
-        btn.addEventListener('click', () => {{
-            navigator.clipboard.writeText({escaped});
-            const original = btn.textContent;
-            btn.textContent = '✅ Copied';
-            setTimeout(() => btn.textContent = original, 1200);
-        }});
-        </script>
-        """,
-        height=28,
-    )
+    html(f"""
+    <style>
+      /* one-off style; prefix id to avoid leaking to other buttons */
+      #{key} {{
+        all: unset;
+        display: inline-flex;
+        align-items: center;
+        gap: .35rem;
+        padding: .25rem .75rem;
+        font-size: .875rem;
+        border-radius: .5rem;
+        border: 1px solid rgba(49,51,63,.2);
+        background: rgb(240,242,246);          /* matches download_button */
+        cursor: pointer;
+        transition: background .15s;
+      }}
+      #{key}:hover {{
+        background: rgb(230,232,236);
+      }}
+      #{key}:active {{
+        background: rgb(210,212,216);
+      }}
+    </style>
+
+    <button id="{key}" title="Copy to clipboard">
+      📋 <span>{label}</span>
+    </button>
+
+    <script>
+      const btn = document.getElementById("{key}");
+      btn.addEventListener('click', () => {{
+          navigator.clipboard.writeText({escaped});
+          const span = btn.querySelector('span');
+          const original = span.textContent;
+          span.textContent = 'Copied';
+          setTimeout(() => span.textContent = original, 1200);
+      }});
+    </script>
+    """, height=36)
 
 
 # ──────────────────────────────────────────────────────────────
