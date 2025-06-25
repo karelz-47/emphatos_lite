@@ -6,7 +6,7 @@ from openai import OpenAI
 # App meta
 # ──────────────────────────────────────────────────────────────
 st.set_page_config(page_title="Empathos Lite", layout="centered")
-st.title("Empathos Lite – Simple mode")
+st.title("Empathos Lite")
 st.subheader("Your voice, their peace of mind")
 
 # ──────────────────────────────────────────────────────────────
