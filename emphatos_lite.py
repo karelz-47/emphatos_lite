@@ -287,4 +287,4 @@ if st.session_state.api_log:
                     st.markdown("- function_call:")
                     st.write(f"  - name: `{inc['function_call']['name']}`")
                     st.write("  - arguments:")
-                    st.json(json.loads(inc["function_call"]["arguments"] or \"{}\"))
+                    st.json(json.loads(inc["function_call"]["arguments"] or "{}"))
