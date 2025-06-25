@@ -53,16 +53,15 @@ def run_llm(messages, api_key):
 # ──────────────────────────────────────────────────────────────
 # Helper – clipboard button (pure front-end)
 # ──────────────────────────────────────────────────────────────
-def copy_button(text: str, key: str, label: str = "Copy") -> None:
+def copy_button(text: str, key: str, label: str = "Copy into clipboard") -> None:
     """
-    Render a Streamlit-styled white button that copies *text* to clipboard.
+    Streamlit-styled white button that copies *text* to clipboard.
     """
-    escaped = json.dumps(text)                # safe JS string
-
+    escaped = json.dumps(text)
     html(f"""
     <style>
       #{key} {{
-        all: unset;
+        font: inherit;                       /* ← same family & weight */
         display: inline-flex;
         align-items: center;
         gap: .4rem;
@@ -70,13 +69,12 @@ def copy_button(text: str, key: str, label: str = "Copy") -> None:
         font-size: .875rem;
         border-radius: .5rem;
         border: 1px solid rgba(49,51,63,.2);
-        background: #fff;                     /* white like download btn */
+        background: #fff;
         cursor: pointer;
         transition: background .15s;
-        margin-left: .5rem;                   /* little gap from download */
       }}
-      #{key}:hover   {{ background: #f8f9fa; }}
-      #{key}:active  {{ background: #eceef1; }}
+      #{key}:hover  {{ background: #f8f9fa; }}
+      #{key}:active {{ background: #eceef1; }}
     </style>
 
     <button id="{key}" title="Copy to clipboard">
@@ -278,18 +276,19 @@ if st.session_state.reviewed_draft:
     st.caption(f"Word count: {wc} / 250")
 
     # Download button
-    st.download_button(
-        "📥 Download as txt",
-        st.session_state.reviewed_draft,
-        file_name="empathos_reply.txt",
-        mime="text/plain",
-    )
-
+    col_dl, col_cp = st.columns([1, 1])        # 1-to-1 width; tweak as you like
+    with col_dl:
+        st.download_button(
+            "📥 Download as txt",
+            st.session_state.reviewed_draft,
+            file_name="empathos_reply.txt",
+            mime="text/plain",
+        )
+    with col_cp:
     # NEW: clipboard button right next to it
-    copy_button(
+        copy_button(
              st.session_state.reviewed_draft,
              key="copy_draft_btn",
-            label="Copy into clipboard",          # you can localise this if needed
         )
 
     st.markdown("---")
@@ -341,19 +340,20 @@ if st.session_state.reviewed_draft:
         st.header("Translated Answer")
         st.text_area("Translation", value=st.session_state.reviewed_translation, height=220)
         
-        st.download_button(
-            "📥 Download as txt",
-            st.session_state.reviewed_translation,
-            file_name="empathos_reply_translated.txt",
-            mime="text/plain",
-        )
-
+        col_dl, col_cp = st.columns([1, 1])
+        with col_dl:
+            st.download_button(
+                "📥 Download as txt",
+                st.session_state.reviewed_translation,
+                file_name="empathos_reply_translated.txt",
+                mime="text/plain",
+            )
+        with col_cp:
         # NEW clipboard for translation
-        copy_button(
-            st.session_state.reviewed_translation,
-            key="copy_translation_btn",
-            label="Copy into clipboard",          # you can localise this if needed
-        )
+            copy_button(
+                st.session_state.reviewed_translation,
+                key="copy_translation_btn",
+            )
 
 # ──────────────────────────────────────────────────────────────
 # Debug – raw API log (optional)
