@@ -224,9 +224,12 @@ if st.session_state.stage == "done" and not st.session_state.reviewed_draft:
 # ──────────────────────────────────────────────────────────────
 
 if st.session_state.reviewed_draft:
-    st.header("Final Draft (reviewed)")
+    st.header("Draft Answer")
     st.text_area("Draft", value=st.session_state.reviewed_draft, height=220)
 
+    # 📋 one-click copy (read-only)
+    st.code(st.session_state.reviewed_draft, language=None)      # adds Streamlit copy icon
+    
     wc = len(st.session_state.reviewed_draft.split())
     st.caption(f"Word count: {wc} / 250")
 
@@ -284,8 +287,10 @@ if st.session_state.reviewed_draft:
         st.session_state.stage = "reviewed_translation"
 
     if st.session_state.reviewed_translation:
-        st.header("Final Translated Reply")
+        st.header("Translated Answer")
         st.text_area("Translation", value=st.session_state.reviewed_translation, height=220)
+        # 📋 one-click copy (read-only)
+        st.code(st.session_state.reviewed_translation, language=None)   # adds Streamlit copy icon
         st.download_button(
             "📥 Download translated reply",
             st.session_state.reviewed_translation,
