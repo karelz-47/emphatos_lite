@@ -33,28 +33,53 @@ def _(key: str) -> str:
     return _trans.get(key, key)
 
 # ─────────────────────────────────────────────────────────────
-# Flag selector – same-tab navigation via <a target="_self">
+# Flag selector – uses on_click → same-tab, no other buttons touched
 # ─────────────────────────────────────────────────────────────
 FLAGS = {"en": "gb", "sk": "sk", "it": "it", "hu": "hu"}
 DEFAULT_LANG = "en"
 current_lang = st.query_params.get("lang", DEFAULT_LANG)
 
-flag_cols = st.columns(len(FLAGS))
-for (code, iso), col in zip(FLAGS.items(), flag_cols):
-    border = "2px solid #1f77ff" if code == current_lang else "1px solid rgba(0,0,0,.15)"
-    col.markdown(
-        f"""
-        <a href="./?lang={code}" target="_self" style="text-decoration:none;">
+def _switch_lang(code):
+    st.query_params["lang"] = code     # rewrite URL
+    st.rerun()                         # reload in same tab
+
+with st.container():
+    flag_cols = st.columns(len(FLAGS))
+    for (code, iso), col in zip(FLAGS.items(), flag_cols):
+        # invisible button catches click
+        col.button(
+            label="",
+            key=f"flag_{code}",
+            on_click=_switch_lang,
+            args=(code,),
+        )
+
+        # flag image
+        border = "2px solid #1f77ff" if code == current_lang else "1px solid rgba(0,0,0,.15)"
+        col.markdown(
+            f"""
             <img src="https://flagcdn.com/w40/{iso}.png"
                  style="width:32px;height:24px;object-fit:cover;
                         border:{border};border-radius:6px;
                         display:block;margin:auto;" />
-        </a>
+            """,
+            unsafe_allow_html=True,
+        )
+
+    # hide ONLY the buttons in this container
+    st.markdown(
+        """
+        <style>
+        div[data-testid="stButton"] button:empty {
+            background: transparent;
+            border: none;
+            padding: 0;
+            height: 24px; width: 32px;
+        }
+        </style>
         """,
-        unsafe_allow_html=True
+        unsafe_allow_html=True,
     )
-
-
 
 # ──────────────────────────────────────────────────────────────
 # App meta
