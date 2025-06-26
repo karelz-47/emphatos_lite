@@ -11,4 +11,3 @@ pydantic>=2.7            # OpenAI client’s model validation
 requests>=2.32           # HTTP transport for OpenAI
 
 streamlit-i18n
-
