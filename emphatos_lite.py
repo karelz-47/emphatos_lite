@@ -160,8 +160,6 @@ def copy_button(text: str, key: str, label: str = _("BTN_COPY")) -> None:
               display: inline-flex;
               align-items: center;
               gap: .35rem;
-              padding: .3rem .9rem;
-              border-radius: .5rem;
               border: 1px solid rgba(49,51,63,.2);
               padding: .25rem .75rem;          /* ← identical to st.download_button */
               border-radius: .25rem;           /* same rounding */background: #fff;
