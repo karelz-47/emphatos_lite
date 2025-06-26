@@ -33,38 +33,31 @@ def _(key: str) -> str:
     return _trans.get(key, key)
 
 # ─────────────────────────────────────────────
-# Flag selector – clickable icons (URL not rewritten)
+# Flag selector – simple <a> links with PNG icons
 # ─────────────────────────────────────────────
 FLAGS = {"en": "gb", "sk": "sk", "it": "it", "hu": "hu"}
 DEFAULT_LANG = "en"
-current_lang = st.query_params.get("lang", DEFAULT_LANG)
 
-def _switch_lang(code):
-    st.session_state["lang"] = code      # store only in session
-    st.rerun()
+# read current language from the URL
+current_lang = st.query_params.get("lang", DEFAULT_LANG)
 
 with st.container():
     flag_cols = st.columns(len(FLAGS))
-    for (code, iso), col in zip(FLAGS.items(), flag_cols):
-        # invisible button captures click
-        col.button(
-            label="",                    # empty keeps it invisible
-            key=f"flag_{code}",
-            on_click=_switch_lang,
-            args=(code,),
-        )
 
-        # visible flag icon
+    for (code, iso), col in zip(FLAGS.items(), flag_cols):
         border = "2px solid #1f77ff" if code == current_lang else "1px solid rgba(0,0,0,.15)"
+
         col.markdown(
             f"""
-            <img src="https://flagcdn.com/w40/{iso}.png"
-                 style="width:32px;height:24px;object-fit:cover;
-                        border:{border};border-radius:6px;
-                        display:block;margin:auto;pointer-events:none;" />
+            <a href="?lang={code}" style="display:inline-block">
+                <img src="https://flagcdn.com/w40/{iso}.png"
+                     style="width:32px;height:24px;object-fit:cover;
+                            border:{border};border-radius:6px;display:block;margin:auto;" />
+            </a>
             """,
             unsafe_allow_html=True,
         )
+
 
     # hide the blank Streamlit button chrome
     st.markdown(
