@@ -28,6 +28,6 @@
   "OUTGOING_MESSAGES": "Odosielané správy:",
   "INCOMING_RESPONSE": "Prijatá odpoveď:",
   "FUNCTION_CALL": "function_call:",
-  "ARGUMENTS": "parametre:"
+  "ARGUMENTS": "parametre:",
   "BTN_TRANSLATE": "Preložiť a skontrolovať"
 }
