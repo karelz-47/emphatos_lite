@@ -7,11 +7,12 @@ from streamlit.components.v1 import html
 # i18n – Manual lightweight version
 # ─────────────────────────────────────────────
 FLAGS = {
-    "en": "🇬🇧",
-    "sk": "🇸🇰",
-    "it": "🇮🇹",
-    "hu": "🇭🇺"
+    "en": "gb",   # 🇬🇧
+    "sk": "sk",   # 🇸🇰
+    "it": "it",   # 🇮🇹
+    "hu": "hu"    # 🇭🇺
 }
+
 DEFAULT_LANG = "en"
 
 current_lang = st.query_params.get("lang", DEFAULT_LANG)
@@ -33,10 +34,22 @@ def _(key):
 
 # Language selector
 flag_cols = st.columns(len(FLAGS))
-for i, (code, flag) in enumerate(FLAGS.items()):
-    if flag_cols[i].button(label=flag, key=f"flag_{code}"):
-        st.query_params["lang"] = code
-        st.rerun()
+
+for i, (code, cc) in enumerate(FLAGS.items()):
+    with flag_cols[i]:
+        if st.button(
+            label="",
+            key=f"flag_{code}",
+            help=code.upper(),
+        ):
+            st.query_params["lang"] = code
+            st.rerun()
+
+        st.image(
+            f"https://flagcdn.com/w40/{cc}.png",  # 40px wide flag
+            width=40,
+            caption=code.upper()
+        )
 
 # ──────────────────────────────────────────────────────────────
 # App meta
