@@ -44,7 +44,7 @@ for (code, iso), col in zip(FLAGS.items(), flag_cols):
     border = "2px solid #1f77ff" if code == current_lang else "1px solid rgba(0,0,0,.15)"
     col.markdown(
         f"""
-        <a href="?lang={code}" target="_self" style="text-decoration:none;">
+        <a href="./?lang={code}" target="_self" style="text-decoration:none;">
             <img src="https://flagcdn.com/w40/{iso}.png"
                  style="width:32px;height:24px;object-fit:cover;
                         border:{border};border-radius:6px;
