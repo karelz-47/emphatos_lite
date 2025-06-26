@@ -122,19 +122,30 @@ def run_llm(messages, api_key):
 # ──────────────────────────────────────────────────────────────
 # Helper – clipboard button (pure front-end)
 # ──────────────────────────────────────────────────────────────
+from streamlit.components.v1 import html
+import json
+
 def copy_button(text: str, key: str, label: str = _("BTN_COPY")) -> None:
-    escaped = json.dumps(text)            # safe JS literal
+    # make the Python string a safe, single-line JS string literal
+    js_text = json.dumps(text)
 
     html(
         f"""
-        <button id="{key}" class="copy-btn"
-                onclick="
-                    navigator.clipboard.writeText({escaped});
-                    const o=this.innerHTML; this.innerHTML='✅ {_('COPIED')}';
-                    setTimeout(()=>this.innerHTML=o,1200);
-                ">
-            📋 {label}
-        </button>
+        <button id="{key}" class="copy-btn">📋 {label}</button>
+
+        <script>
+          (function() {{
+              const btn  = document.getElementById("{key}");
+              const text = {js_text};            // the payload
+
+              btn.addEventListener("click", () => {{
+                  navigator.clipboard.writeText(text);
+                  const orig = btn.innerHTML;
+                  btn.innerHTML = "✅ {_('COPIED')}";
+                  setTimeout(() => btn.innerHTML = orig, 1200);
+              }});
+          }})();
+        </script>
 
         <style>
           #{key}.copy-btn{{
@@ -147,8 +158,9 @@ def copy_button(text: str, key: str, label: str = _("BTN_COPY")) -> None:
           #{key}.copy-btn:active {{background:#eceef1;}}
         </style>
         """,
-        height=38, 
+        height=40, scrolling=False   # <- no ‘key=’ here – iframe widgets don’t support it
     )
+
 
 
 # ──────────────────────────────────────────────────────────────
