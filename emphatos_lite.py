@@ -170,7 +170,7 @@ st.text_area(
 
 st.radio(_("CHANNEL"), [_("EMAIL_PRIVATE"), _("PUBLIC_POST")], key="channel_type", horizontal=True)
 
-api_key = st.text_input("API_KEY", type="password")
+api_key = st.text_input((_("API_KEY"), type="password")
 
 # ──────────────────────────────────────────────────────────────
 # Helper – safe Session-State reset
@@ -250,6 +250,13 @@ if st.button(_("BTN_GENERATE"), key="btn_generate"):
                 "maintain brand voice, end with a call‑to‑action if appropriate."
             )
 
+        target_lang_name = {
+            "en": "English", "sk": "Slovak",
+            "it": "Italian", "hu": "Hungarian"
+        }[current_lang]
+
+        channel_instr += f"\nAlways write the final reply in {target_lang_name}."
+
         # 3. Build one‑shot prompt
         signature = st.session_state.signature.strip() or "(No signature provided)"
         system_prompt = f"{channel_instr}\n" + DEFAULT_PROMPT.format(
@@ -326,7 +333,7 @@ if st.session_state.reviewed_draft:
 
     # Translation option
     tgt = st.selectbox(_("TRANSLATE_TO"), LANGUAGE_OPTIONS, index=0, key="translation_language")
-    if st.button("_("BTN_TRANSLATE")", key="btn_translate"):
+    if st.button(_("BTN_TRANSLATE"), key="btn_translate"):
         try:
             trans = run_llm([
                 {
@@ -395,7 +402,7 @@ if st.session_state.api_log:
         st.markdown(_("API_LOG_HEADER"))
         for i, entry in enumerate(st.session_state.api_log, start=1):
             with st.expander(f"Call #{i}"):
-                st.markdown(_("OUTGOING MESSAGES"))
+                st.markdown(_("OUTGOING_MESSAGES"))
                 for m in entry["outgoing"]:
                     st.write(f"- role: `{m['role']}`")
                     st.code(m["content"])
