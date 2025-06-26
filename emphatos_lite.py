@@ -181,7 +181,7 @@ st.text_area(
 
 st.radio(_("CHANNEL"), [_("EMAIL_PRIVATE"), _("PUBLIC_POST")], key="channel_type", horizontal=True)
 
-api_key = st.text_input((_("API_KEY"), type="password")
+api_key = st.text_input(_("API_KEY"), type="password")
 
 # ──────────────────────────────────────────────────────────────
 # Helper – safe Session-State reset
