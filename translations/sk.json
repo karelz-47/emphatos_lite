@@ -1,0 +1,15 @@
+// translations/sk.json
+{
+  "APP_TITLE": "Empathos Lite",
+  "TAGLINE": "YOur voice, their peace of mind",
+  "SIGNATURE_LABEL": "Podpis operátora (napr. „S pozdravom\\nJakub“)",
+  "CUSTOMER_MSG": "Text od zákazníka alebo recenzia",
+  "NOTES": "Informácie dôležité pre odpoveď (poznámky operátora)",
+  "CHANNEL": "Komunikačný kanál",
+  "EMAIL_PRIVATE": "E-mail (súkromný)",
+  "PUBLIC_POST": "Verejný príspevok",
+  "API_KEY": "OpenAI API kľúč",
+  "BTN_GENERATE": "Generovať návrh odpovede",
+  "BTN_CLEAR": "Vymazať polia / Nová úloha",
+  "KEEP_INFO": "Ponechať podpis a poznámky pri vymazaní"
+}
