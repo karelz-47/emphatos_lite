@@ -92,7 +92,7 @@ DEFAULT_PROMPT = (
     "3. If CLIENT_REVIEW or OPERATOR_NOTES is blank, silently skip that section.  \n"
     "4. Do **not** expose policy numbers or internal processes.  \n"
     "5. Do **not** promise anything beyond existing policy terms.  \n"
-    "6. End with this exact signature (unaltered): {signature}"\n\n"
+    "6. End with this exact signature (unaltered): {signature}\n\n"
 
     "Return **only** the final reply text (no meta-commentary, no lists)."
 
