@@ -28,5 +28,6 @@
   "OUTGOING_MESSAGES": "Kimenő üzenetek:",
   "INCOMING_RESPONSE": "Bejövő válasz:",
   "FUNCTION_CALL": "function_call:",
-  "ARGUMENTS": "paraméterek:"
+  "ARGUMENTS": "paraméterek:",
+  "BTN_TRANSLATE": "Fordítás és ellenőrzés"
 }
