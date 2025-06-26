@@ -2,7 +2,6 @@ import json
 import streamlit as st
 from openai import OpenAI
 from streamlit.components.v1 import html
-from st_i18n import Translator
 
 # ─────────────────────────────────────────────
 # i18n – Manual lightweight version
