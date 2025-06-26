@@ -9,5 +9,3 @@ tiktoken>=0.6            # token counting / safe truncation (needed if you later
 # ── Exact versions of transitive deps (optional pins) ───────
 pydantic>=2.7            # OpenAI client’s model validation
 requests>=2.32           # HTTP transport for OpenAI
-
-git+https://github.com/AI-Yash/st-i18n.git
