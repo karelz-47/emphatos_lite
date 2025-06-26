@@ -28,5 +28,6 @@
   "OUTGOING_MESSAGES": "Messaggi in uscita:",
   "INCOMING_RESPONSE": "Risposta ricevuta:",
   "FUNCTION_CALL": "function_call:",
-  "ARGUMENTS": "argomenti:"
+  "ARGUMENTS": "argomenti:",
+  "BTN_TRANSLATE": "Traduci e revisiona"
 }
