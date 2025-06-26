@@ -32,24 +32,28 @@ def _(key: str) -> str:
     """Return translated string or the key itself if missing."""
     return _trans.get(key, key)
 
-# ── helper: draw one flag that acts as a button ──────────────────────────────
-def flag_button(col, lang_code: str, iso: str, is_current: bool):
-    border = "2px solid #1f77ff" if is_current else "1px solid rgba(0,0,0,.15)"
+# ─────────────────────────────────────────────────────────────
+# Flag selector – image itself is clickable, same-tab reload
+# ─────────────────────────────────────────────────────────────
+FLAGS = {"en": "gb", "sk": "sk", "it": "it", "hu": "hu"}
+DEFAULT_LANG = "en"
+current_lang = st.query_params.get("lang", DEFAULT_LANG)
 
-    # 1️⃣ invisible Streamlit button catches the click
-    if col.button("", key=f"flag_{lang_code}"):
-        st.query_params["lang"] = lang_code   # update URL in the same tab
-        st.rerun()
-
-    # 2️⃣ show the flag icon
+flag_cols = st.columns(len(FLAGS))
+for (code, iso), col in zip(FLAGS.items(), flag_cols):
+    border = "2px solid #1f77ff" if code == current_lang else "1px solid rgba(0,0,0,.15)"
+    # JS sets window.location.search → same-tab language switch
     col.markdown(
         f"""
         <img src="https://flagcdn.com/w40/{iso}.png"
              style="width:32px;height:24px;object-fit:cover;
-                    border:{border};border-radius:6px;display:block;margin:auto;" />
+                    border:{border};border-radius:6px;display:block;margin:auto;
+                    cursor:pointer;"
+             onclick="window.location.search='?lang={code}'" />
         """,
         unsafe_allow_html=True
     )
+
 
 # ── build the selector row ───────────────────────────────────────────────────
 flag_cols = st.columns(len(FLAGS))
