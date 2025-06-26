@@ -4,10 +4,9 @@ from openai import OpenAI
 from streamlit.components.v1 import html
 from st_i18n import Translator
 
-# ──────────────────────────────────────────────────────────────
-# I18n – language flags and translator
-# ──────────────────────────────────────────────────────────────
-
+# ─────────────────────────────────────────────
+# i18n – Manual lightweight version
+# ─────────────────────────────────────────────
 FLAGS = {
     "en": "🇬🇧",
     "sk": "🇸🇰",
@@ -18,10 +17,22 @@ DEFAULT_LANG = "en"
 
 current_lang = st.query_params.get("lang", DEFAULT_LANG)
 
-trans = Translator(directory="translations", default_lang=DEFAULT_LANG, lang=current_lang)
-_ = trans.gettext  # Now _() wraps all translatable strings
+def load_translation(lang):
+    try:
+        with open(f"lang/{lang}.json", "r", encoding="utf-8") as f:
+            return json.load(f)
+    except FileNotFoundError:
+        with open("lang/en.json", "r", encoding="utf-8") as f:
+            return json.load(f)
 
-# Flag selector at the top
+# Load selected language dict
+trans_dict = load_translation(current_lang)
+
+# Define _() to act like gettext
+def _(key):
+    return trans_dict.get(key, key)  # fallback to key if not found
+
+# Language selector
 flag_cols = st.columns(len(FLAGS))
 for i, (code, flag) in enumerate(FLAGS.items()):
     if flag_cols[i].button(flag, key=f"flag_{code}"):
