@@ -1,7 +1,7 @@
 {
   "APP_TITLE": "Empathos Lite",
   "TAGLINE": "Your voice, their peace of mind",
-  "SIGNATURE_LABEL": "Firma dell'operatore (es. 'Cordiali saluti\\nJacopo')",
+  "SIGNATURE_LABEL": "Firma dell'operatore (es. 'Cordiali saluti Jacopo')",
   "SIGNATURE_PLACEHOLDER": "Inserisci qui la tua firma personale",
   "CUSTOMER_MSG": "Messaggio o recensione del cliente",
   "CUSTOMER_MSG_PLACEHOLDER": "Incolla qui il testo del cliente",
