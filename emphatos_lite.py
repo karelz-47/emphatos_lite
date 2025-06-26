@@ -147,7 +147,7 @@ def copy_button(text: str, key: str, label: str = _("BTN_COPY")) -> None:
           #{key}.copy-btn:active {{background:#eceef1;}}
         </style>
         """,
-        height=38, key=key     # key prevents flicker on reruns
+        height=38, 
     )
 
 
@@ -337,7 +337,6 @@ if st.session_state.reviewed_draft:
     st.text_area(
         _("DRAFT_LABEL"),
         key="reviewed_draft",                  # 👈 bind to state
-        value=st.session_state.reviewed_draft, # initial fill
         height=220,
     )
 
@@ -410,7 +409,6 @@ if st.session_state.reviewed_draft:
         st.text_area(
             _("TRANSLATION_LABEL"),
             key="reviewed_translation",
-            value=st.session_state.reviewed_translation,
             height=220,
         )
         
