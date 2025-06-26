@@ -10,4 +10,4 @@ tiktoken>=0.6            # token counting / safe truncation (needed if you later
 pydantic>=2.7            # OpenAI client’s model validation
 requests>=2.32           # HTTP transport for OpenAI
 
-streamlit-i18n
+git+https://github.com/AI-Yash/st-i18n.git
