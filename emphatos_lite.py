@@ -17,6 +17,21 @@ DEFAULT_LANG = "en"
 
 current_lang = st.query_params.get("lang", DEFAULT_LANG)
 
+# after current_lang is defined  ───────────────────────────────
+def load_translation(lang):
+    try:
+        with open(f"lang/{lang}.json", "r", encoding="utf-8") as f:
+            return json.load(f)
+    except FileNotFoundError:
+        with open("lang/en.json", "r", encoding="utf-8") as f:
+            return json.load(f)
+
+_trans = load_translation(current_lang)
+
+def _(key: str) -> str:
+    """Return translated string or the key itself if missing."""
+    return _trans.get(key, key)
+
 flag_cols = st.columns(len(FLAGS))
 for i, (lang_code, iso) in enumerate(FLAGS.items()):
     selected = (lang_code == current_lang)
