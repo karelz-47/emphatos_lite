@@ -17,35 +17,26 @@ DEFAULT_LANG = "en"
 
 current_lang = st.query_params.get("lang", DEFAULT_LANG)
 
-def load_translation(lang):
-    try:
-        with open(f"lang/{lang}.json", "r", encoding="utf-8") as f:
-            return json.load(f)
-    except FileNotFoundError:
-        with open("lang/en.json", "r", encoding="utf-8") as f:
-            return json.load(f)
-
-# Load selected language dict
-trans_dict = load_translation(current_lang)
-
-# Define _() to act like gettext
-def _(key):
-    return trans_dict.get(key, key)  # fallback to key if not found
-
-# Language selector
 flag_cols = st.columns(len(FLAGS))
-for i, (code, cc) in enumerate(FLAGS.items()):
-    with flag_cols[i]:
-        # Clickable image via HTML
-        st.markdown(
-            f"""
-            <a href="?lang={code}">
-                <img src="https://flagcdn.com/w40/{cc}.png" width="40" style="border-radius:6px;" />
-            </a>
-            <div style="text-align:center; margin-top:0.2rem;">{code.upper()}</div>
-            """,
-            unsafe_allow_html=True
-        )
+for i, (lang_code, iso) in enumerate(FLAGS.items()):
+    selected = (lang_code == current_lang)
+    border = "2px solid #1f77ff" if selected else "1px solid rgba(0,0,0,.15)"
+
+    # clickable image wrapped in a link – no extra Streamlit button
+    flag_html = f"""
+    <a href="?lang={lang_code}" style="text-decoration:none;">
+       <img src="https://flagcdn.com/w40/{iso}.png"
+            style="
+                width:32px; height:24px;
+                object-fit:cover;            /* crops wide flags neatly */
+                border:{border};
+                border-radius:6px;
+                display:block;
+                margin:auto;
+            " />
+    </a>
+    """
+    flag_cols[i].markdown(flag_html, unsafe_allow_html=True)
 
 # ──────────────────────────────────────────────────────────────
 # App meta
