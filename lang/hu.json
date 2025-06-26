@@ -1,7 +1,7 @@
 {
   "APP_TITLE": "Empathos Lite",
   "TAGLINE": "Your voice, their peace of mind",
-  "SIGNATURE_LABEL": "Ügyintéző aláírása (pl.: 'Tisztelettel\\nJakab')",
+  "SIGNATURE_LABEL": "Ügyintéző aláírása (pl.: 'Tisztelettel Jakab')",
   "SIGNATURE_PLACEHOLDER": "Írd be ide a személyes aláírásod",
   "CUSTOMER_MSG": "Ügyfél üzenete vagy véleménye",
   "CUSTOMER_MSG_PLACEHOLDER": "Illeszd be ide az ügyfél szövegét",
