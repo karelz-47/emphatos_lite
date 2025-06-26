@@ -2,7 +2,7 @@ import json
 import streamlit as st
 from openai import OpenAI
 from streamlit.components.v1 import html
-from streamlit_i18n import Translator
+from st_i18n import Translator
 
 # ──────────────────────────────────────────────────────────────
 # I18n – language flags and translator
