@@ -152,14 +152,23 @@ def copy_button(text: str, key: str, label: str = _("BTN_COPY")) -> None:
         </script>
 
         <style>
-          #{key}.copy-btn{{
-              font:inherit;display:inline-flex;align-items:center;gap:.35rem;
-              padding:.3rem .9rem;border-radius:.5rem;
-              border:1px solid rgba(49,51,63,.2);background:#fff;cursor:pointer;
-              transition:background .15s;
+           /* same family & size as Streamlit buttons */
+          .copy-btn {{
+              font-family: "Source Sans Pro", system-ui, sans-serif;
+              font-size: 0.88rem;          /* ≈ Streamlit default */
+              line-height: 1.2;
+              display: inline-flex;
+              align-items: center;
+              gap: .35rem;
+              padding: .3rem .9rem;
+              border-radius: .5rem;
+              border: 1px solid rgba(49,51,63,.2);
+              background: #fff;
+              cursor: pointer;
+              transition: background .15s;
           }}
-          #{key}.copy-btn:hover  {{background:#f8f9fa;}}
-          #{key}.copy-btn:active {{background:#eceef1;}}
+          .copy-btn:hover  {{ background:#f8f9fa; }}
+          .copy-btn:active {{ background:#eceef1; }}
         </style>
         """,
         height=40, scrolling=False   # <- no ‘key=’ here – iframe widgets don’t support it
