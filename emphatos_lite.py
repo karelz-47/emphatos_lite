@@ -32,39 +32,45 @@ def _(key: str) -> str:
     """Return translated string or the key itself if missing."""
     return _trans.get(key, key)
 
-# ─────────────────────────────────────────────────────────────
-# Flag selector – uses on_click → same-tab, no other buttons touched
-# ─────────────────────────────────────────────────────────────
+# ─────────────────────────────────────────────
+# Flag selector – clickable icons (URL not rewritten)
+# ─────────────────────────────────────────────
 FLAGS = {"en": "gb", "sk": "sk", "it": "it", "hu": "hu"}
 DEFAULT_LANG = "en"
 current_lang = st.query_params.get("lang", DEFAULT_LANG)
 
 def _switch_lang(code):
-    st.query_params["lang"] = code     # rewrite URL
-    st.rerun()                         # reload in same tab
+    st.session_state["lang"] = code      # store only in session
+    st.rerun()
 
 with st.container():
     flag_cols = st.columns(len(FLAGS))
     for (code, iso), col in zip(FLAGS.items(), flag_cols):
-        border = "2px solid #1f77ff" if code == current_lang else "1px solid rgba(0,0,0,.15)"
-
-        # put the <img> HTML directly in the button’s label
+        # invisible button captures click
         col.button(
-            label=f"""<img src="https://flagcdn.com/w40/{iso}.png"
-                           style="width:32px;height:24px;object-fit:cover;
-                              border:{border};border-radius:6px;" />""",
+            label="",                    # empty keeps it invisible
             key=f"flag_{code}",
             on_click=_switch_lang,
             args=(code,),
-            use_container_width=True,          # so the icon is centred
-            unsafe_allow_html=True             # let HTML through
         )
 
-    # hide ONLY the buttons in this container
+        # visible flag icon
+        border = "2px solid #1f77ff" if code == current_lang else "1px solid rgba(0,0,0,.15)"
+        col.markdown(
+            f"""
+            <img src="https://flagcdn.com/w40/{iso}.png"
+                 style="width:32px;height:24px;object-fit:cover;
+                        border:{border};border-radius:6px;
+                        display:block;margin:auto;pointer-events:none;" />
+            """,
+            unsafe_allow_html=True,
+        )
+
+    # hide the blank Streamlit button chrome
     st.markdown(
         """
         <style>
-        div[data-testid="stButton"] button:empty {
+        div[data-testid="stButton"] > button {
             background: transparent;
             border: none;
             padding: 0;
