@@ -388,6 +388,10 @@ if st.session_state.reviewed_draft:
     # Translation option
     tgt = st.selectbox(_("TRANSLATE_TO"), LANGUAGE_OPTIONS, index=0, key="translation_language")
     if st.button(_("BTN_TRANSLATE"), key="btn_translate"):
+        # ---- reset artefacts from any previous translation ------------
+        st.session_state.translation          = ""
+        st.session_state.reviewed_translation = ""
+        
         try:
             trans = run_llm([
                 {
