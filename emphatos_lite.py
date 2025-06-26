@@ -2,17 +2,42 @@ import json
 import streamlit as st
 from openai import OpenAI
 from streamlit.components.v1 import html
+from streamlit_i18n import Translator
+
+# ──────────────────────────────────────────────────────────────
+# I18n – language flags and translator
+# ──────────────────────────────────────────────────────────────
+
+FLAGS = {
+    "en": "🇬🇧",
+    "sk": "🇸🇰",
+    "it": "🇮🇹",
+    "hu": "🇭🇺"
+}
+DEFAULT_LANG = "en"
+
+current_lang = st.query_params.get("lang", DEFAULT_LANG)
+
+trans = Translator(directory="translations", default_lang=DEFAULT_LANG, lang=current_lang)
+_ = trans.gettext  # Now _() wraps all translatable strings
+
+# Flag selector at the top
+flag_cols = st.columns(len(FLAGS))
+for i, (code, flag) in enumerate(FLAGS.items()):
+    if flag_cols[i].button(flag, key=f"flag_{code}"):
+        st.query_params["lang"] = code
+        st.rerun()
 
 # ──────────────────────────────────────────────────────────────
 # App meta
 # ──────────────────────────────────────────────────────────────
-st.set_page_config(page_title="Empathos Lite", layout="centered")
-st.title("Empathos Lite")
-st.subheader("Your voice, their peace of mind")
-
+st.set_page_config(page_title=_("APP_TITLE"), layout="centered")
+st.title(_("APP_TITLE"))
+st.subheader(_("TAGLINE"))
 # ──────────────────────────────────────────────────────────────
 # Constants
 # ──────────────────────────────────────────────────────────────
+
 LANGUAGE_OPTIONS = [
     "English", "Slovak", "Italian", "Icelandic",
     "Hungarian", "German", "Czech", "Polish", "Vulcan"
@@ -53,7 +78,7 @@ def run_llm(messages, api_key):
 # ──────────────────────────────────────────────────────────────
 # Helper – clipboard button (pure front-end)
 # ──────────────────────────────────────────────────────────────
-def copy_button(text: str, key: str, label: str = "Copy into clipboard") -> None:
+def copy_button(text: str, key: str, label: str = _("BTN_COPY")) -> None:
     """
     Render a pill-shaped 📋 button (same font/style as Streamlit buttons)
     that copies *text* to clipboard.
@@ -123,29 +148,29 @@ for k, v in _defaults.items():
 # ──────────────────────────────────────────────────────────────
 
 st.text_area(
-    "Operator signature (e.g., 'Yours sincerely\nJacob')",
+    _("SIGNATURE_LABEL"),
     key="signature",
-    placeholder="Enter your personal signature line(s) here",
+    placeholder=_("SIGNATURE_PLACEHOLDER"),
     height=80,
 )
 
 client_review = st.text_area(
-    "Customer message or review",
+    _("CUSTOMER_MSG"),
     key="client_review",                    
-    placeholder="Paste the customer's text here",
+    placeholder=_("CUSTOMER_MSG_PLACEHOLDER"),
     height=140,
 )
 
 st.text_area(
-    "Additional information for answer (operator notes)",
+    _("NOTES"),
     key="operator_notes",
-    placeholder="Reply to open questions or add facts the model needs.",
+    placeholder=_("NOTES_PLACEHOLDER"),
     height=100,
 )
 
-st.radio("Response channel", ["Email (private)", "Public post"], key="channel_type", horizontal=True)
+st.radio(_("CHANNEL"), [_("EMAIL_PRIVATE"), _("PUBLIC_POST")], key="channel_type", horizontal=True)
 
-api_key = st.text_input("OpenAI API key", type="password")
+api_key = st.text_input("API_KEY", type="password")
 
 # ──────────────────────────────────────────────────────────────
 # Helper – safe Session-State reset
@@ -173,11 +198,11 @@ def clear_state(preserve: bool = False) -> None:
 # ──────────────────────────────────────────────────────────────
 
 keep_info = st.checkbox(
-    "Keep signature and notes when clearing", key="keep_info"
+    _("KEEP_INFO"), key="keep_info"
 )
 
 st.button(
-    "Clear fields / Start new task",
+    _("BTN_CLEAR"),
     key="btn_clear",
     on_click=clear_state,          # ← call helper BEFORE next rerun
     kwargs={"preserve": keep_info},
@@ -189,9 +214,9 @@ st.markdown("---")
 # Generate response draft
 # ──────────────────────────────────────────────────────────────
 
-if st.button("Generate response draft", key="btn_generate"):
+if st.button(_("BTN_GENERATE"), key="btn_generate"):
     if not client_review.strip() or not api_key:
-        st.error("Please provide the customer text and an API key.")
+        st.error(_("ERROR_MISSING_INPUTS"))
     else:
         # ★ Wipe any previous outputs so we always start fresh
         for k in ("draft", "reviewed_draft", "translation", "reviewed_translation"):
@@ -275,8 +300,8 @@ if st.session_state.stage == "done" and not st.session_state.reviewed_draft:
 # ──────────────────────────────────────────────────────────────
 
 if st.session_state.reviewed_draft:
-    st.header("Draft Answer")
-    st.text_area("Draft", value=st.session_state.reviewed_draft, height=220)
+    st.header(_("DRAFT_ANSWER"))
+    st.text_area(_("DRAFT_LABEL"), value=st.session_state.reviewed_draft, height=220)
 
     wc = len(st.session_state.reviewed_draft.split())
     st.caption(f"Word count: {wc} / 250")
@@ -285,7 +310,7 @@ if st.session_state.reviewed_draft:
     col_dl, col_cp = st.columns([1, 1])        # 1-to-1 width; tweak as you like
     with col_dl:
         st.download_button(
-            "📥 Download as txt",
+            _("BTN_DOWNLOAD"),
             st.session_state.reviewed_draft,
             file_name="empathos_reply.txt",
             mime="text/plain",
@@ -300,8 +325,8 @@ if st.session_state.reviewed_draft:
     st.markdown("---")
 
     # Translation option
-    tgt = st.selectbox("Translate final reply to:", LANGUAGE_OPTIONS, index=0, key="translation_language")
-    if st.button("Translate & review", key="btn_translate"):
+    tgt = st.selectbox(_("TRANSLATE_TO"), LANGUAGE_OPTIONS, index=0, key="translation_language")
+    if st.button("_("BTN_TRANSLATE")", key="btn_translate"):
         try:
             trans = run_llm([
                 {
@@ -343,13 +368,13 @@ if st.session_state.reviewed_draft:
         st.session_state.stage = "reviewed_translation"
 
     if st.session_state.reviewed_translation:
-        st.header("Translated Answer")
-        st.text_area("Translation", value=st.session_state.reviewed_translation, height=220)
+        st.header(_("TRANSLATED_ANSWER"))
+        st.text_area(_("TRANSLATION_LABEL"), value=st.session_state.reviewed_translation, height=220)
         
         col_dl, col_cp = st.columns([1, 1])
         with col_dl:
             st.download_button(
-                "📥 Download as txt",
+                _("BTN_DOWNLOAD"),
                 st.session_state.reviewed_translation,
                 file_name="empathos_reply_translated.txt",
                 mime="text/plain",
@@ -365,21 +390,21 @@ if st.session_state.reviewed_draft:
 # Debug – raw API log (optional)
 # ──────────────────────────────────────────────────────────────
 if st.session_state.api_log:
-    if st.checkbox("🔍 Show API Communication Log", key="show_api_log"):
+    if st.checkbox(_("SHOW_API_LOG"), key="show_api_log"):
         st.markdown("---")
-        st.markdown("## 🔍 API Communication Log (all calls)")
+        st.markdown(_("API_LOG_HEADER"))
         for i, entry in enumerate(st.session_state.api_log, start=1):
             with st.expander(f"Call #{i}"):
-                st.markdown("**Outgoing messages**:")
+                st.markdown(_("OUTGOING MESSAGES"))
                 for m in entry["outgoing"]:
                     st.write(f"- role: `{m['role']}`")
                     st.code(m["content"])
-                st.markdown("**Incoming response**:")
+                st.markdown(_("INCOMING_MESSAGES"))
                 inc = entry["incoming"]
                 st.write(f"- role: `{inc['role']}`")
                 st.code(inc["content"])
                 if inc.get("function_call") and inc["function_call"]["name"]:
-                    st.markdown("- function_call:")
+                    st.markdown(_("FUNCTION_CALL"))
                     st.write(f"  - name: `{inc['function_call']['name']}`")
-                    st.write("  - arguments:")
+                    st.write(_("ARGUMENTS"))
                     st.json(json.loads(inc["function_call"]["arguments"] or "{}"))
