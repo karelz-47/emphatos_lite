@@ -55,27 +55,6 @@ for (code, iso), col in zip(FLAGS.items(), flag_cols):
     )
 
 
-# ── build the selector row ───────────────────────────────────────────────────
-flag_cols = st.columns(len(FLAGS))
-for (code, iso), col in zip(FLAGS.items(), flag_cols):
-    flag_button(col, code, iso, code == current_lang)
-
-# ── hide the blank Streamlit button chrome so only the flag is visible ──────
-st.markdown(
-    """
-    <style>
-    div[data-testid="stButton"] > button {
-        background: transparent;
-        border: none;
-        padding: 0;
-        height: 24px; width: 32px;   /* same as flag image */
-    }
-    </style>
-    """,
-    unsafe_allow_html=True
-)
-
-
 # ──────────────────────────────────────────────────────────────
 # App meta
 # ──────────────────────────────────────────────────────────────
