@@ -122,51 +122,57 @@ def run_llm(messages, api_key):
 # ──────────────────────────────────────────────────────────────
 # Helper – clipboard button (pure front-end)
 # ──────────────────────────────────────────────────────────────
-def copy_button(text: str, key: str, label: str = _("BTN_COPY")) -> None:
-    """
-    Render a pill-shaped 📋 button (same font/style as Streamlit buttons)
-    that copies *text* to clipboard.
-    """
-    escaped = json.dumps(text)
+from streamlit.components.v1 import html
+import json
 
-    st.markdown(
+def copy_button(text: str, key: str, label: str = _("BTN_COPY")) -> None:
+    # make the Python string a safe, single-line JS string literal
+    js_text = json.dumps(text)
+
+    html(
         f"""
-        <button id="{key}" class="copy-btn">
-            📋 {label}
-        </button>
+        <!-- bring in the same font Streamlit uses -->
+        <link rel="preconnect" href="https://fonts.gstatic.com">
+        <link href="https://fonts.googleapis.com/css2?family=Source+Sans+Pro:wght@400;600&display=swap" rel="stylesheet">
+
+        <button id="{key}" class="copy-btn">📋 {label}</button>
 
         <script>
-        const btn_{key} = document.getElementById("{key}");
-        if (btn_{key}) {{
-            btn_{key}.onclick = () => {{
-                navigator.clipboard.writeText({escaped});
-                const original = btn_{key}.innerHTML;
-                btn_{key}.innerHTML = "✅ Copied";
-                setTimeout(() => btn_{key}.innerHTML = original, 1200);
-            }};
-        }}
+          (function() {{
+              const btn  = document.getElementById("{key}");
+              const text = {js_text};            // the payload
+
+              btn.addEventListener("click", () => {{
+                  navigator.clipboard.writeText(text);
+                  const orig = btn.innerHTML;
+                  btn.innerHTML = "✅ {_('COPIED')}";
+                  setTimeout(() => btn.innerHTML = orig, 1200);
+              }});
+          }})();
         </script>
 
         <style>
-        /* one-off style hooked to this id only */
-        #{key}.copy-btn {{
-            font: inherit;                       /* same family/weight */
-            display: inline-flex;
-            align-items: center;
-            gap: .35rem;
-            padding: .3rem .9rem;
-            border-radius: .5rem;
-            border: 1px solid rgba(49,51,63,.2);
-            background: #fff;                    /* white pill */
-            cursor: pointer;
-            transition: background .15s;
-        }}
-        #{key}.copy-btn:hover  {{ background:#f8f9fa; }}
-        #{key}.copy-btn:active {{ background:#eceef1; }}
+           /* same family & size as Streamlit buttons */
+          .copy-btn {{
+              font-family: "Source Sans Pro", system-ui, sans-serif;
+              font-size: 0.88rem;          /* ≈ Streamlit default */
+              line-height: 1.2;
+              display: inline-flex;
+              align-items: center;
+              gap: .35rem;
+              border: 1px solid rgba(49,51,63,.2);
+              padding: .25rem .75rem;          /* ← identical to st.download_button */
+              border-radius: .25rem;           /* same rounding */background: #fff;
+              cursor: pointer;
+              transition: background .15s;
+          }}
+          .copy-btn:hover  {{ background:#f8f9fa; }}
+          .copy-btn:active {{ background:#eceef1; }}
         </style>
         """,
-        unsafe_allow_html=True,
+        height=40, scrolling=False   # <- no ‘key=’ here – iframe widgets don’t support it
     )
+
 
 
 # ──────────────────────────────────────────────────────────────
@@ -352,7 +358,11 @@ if st.session_state.stage == "done" and not st.session_state.reviewed_draft:
 
 if st.session_state.reviewed_draft:
     st.header(_("DRAFT_ANSWER"))
-    st.text_area(_("DRAFT_LABEL"), value=st.session_state.reviewed_draft, height=220)
+    st.text_area(
+        _("DRAFT_LABEL"),
+        key="reviewed_draft",                  # 👈 bind to state
+        height=220,
+    )
 
     wc = len(st.session_state.reviewed_draft.split())
     st.caption(f"Word count: {wc} / 250")
@@ -420,7 +430,11 @@ if st.session_state.reviewed_draft:
 
     if st.session_state.reviewed_translation:
         st.header(_("TRANSLATED_ANSWER"))
-        st.text_area(_("TRANSLATION_LABEL"), value=st.session_state.reviewed_translation, height=220)
+        st.text_area(
+            _("TRANSLATION_LABEL"),
+            key="reviewed_translation",
+            height=220,
+        )
         
         col_dl, col_cp = st.columns([1, 1])
         with col_dl:
