@@ -32,26 +32,45 @@ def _(key: str) -> str:
     """Return translated string or the key itself if missing."""
     return _trans.get(key, key)
 
-flag_cols = st.columns(len(FLAGS))
-for i, (lang_code, iso) in enumerate(FLAGS.items()):
-    selected = (lang_code == current_lang)
-    border = "2px solid #1f77ff" if selected else "1px solid rgba(0,0,0,.15)"
+# ── helper: draw one flag that acts as a button ──────────────────────────────
+def flag_button(col, lang_code: str, iso: str, is_current: bool):
+    border = "2px solid #1f77ff" if is_current else "1px solid rgba(0,0,0,.15)"
 
-    # clickable image wrapped in a link – no extra Streamlit button
-    flag_html = f"""
-    <a href="?lang={lang_code}" style="text-decoration:none;">
-       <img src="https://flagcdn.com/w40/{iso}.png"
-            style="
-                width:32px; height:24px;
-                object-fit:cover;            /* crops wide flags neatly */
-                border:{border};
-                border-radius:6px;
-                display:block;
-                margin:auto;
-            " />
-    </a>
+    # 1️⃣ invisible Streamlit button catches the click
+    if col.button("", key=f"flag_{lang_code}"):
+        st.query_params["lang"] = lang_code   # update URL in the same tab
+        st.rerun()
+
+    # 2️⃣ show the flag icon
+    col.markdown(
+        f"""
+        <img src="https://flagcdn.com/w40/{iso}.png"
+             style="width:32px;height:24px;object-fit:cover;
+                    border:{border};border-radius:6px;display:block;margin:auto;" />
+        """,
+        unsafe_allow_html=True
+    )
+
+# ── build the selector row ───────────────────────────────────────────────────
+flag_cols = st.columns(len(FLAGS))
+for (code, iso), col in zip(FLAGS.items(), flag_cols):
+    flag_button(col, code, iso, code == current_lang)
+
+# ── hide the blank Streamlit button chrome so only the flag is visible ──────
+st.markdown(
     """
-    flag_cols[i].markdown(flag_html, unsafe_allow_html=True)
+    <style>
+    div[data-testid="stButton"] > button {
+        background: transparent;
+        border: none;
+        padding: 0;
+        height: 24px; width: 32px;   /* same as flag image */
+    }
+    </style>
+    """,
+    unsafe_allow_html=True
+)
+
 
 # ──────────────────────────────────────────────────────────────
 # App meta
