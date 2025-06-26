@@ -388,14 +388,22 @@ if st.session_state.reviewed_draft:
     # Translation option
     tgt = st.selectbox(_("TRANSLATE_TO"), LANGUAGE_OPTIONS, index=0, key="translation_language")
     if st.button(_("BTN_TRANSLATE"), key="btn_translate"):
+        # ---- reset artefacts from any previous translation ------------
+        st.session_state.translation          = ""
+        st.session_state.reviewed_translation = ""
+        
         try:
             trans = run_llm([
                 {
                     "role": "system",
                     "content": (
-                        "You are a translation assistant. Translate the following reply into "
-                        f"{tgt} using professional unit‑linked insurance terminology; ensure it sounds natural for native speakers.\n"
-                        "Do not add commentary or promises."
+                        "You are a translation assistant. Translate the following reply **verbatim**, into "
+                        f"{tgt} preserving:\n"
+                        "- the greeting/salutation at the start,\n"
+                        "- all paragraph breaks (empty lines),\n"
+                        "- the final signature exactly as is.\n"
+                        "Write in {tgt} with professional insurance terminology; ensure it sounds natural for native speakers.\n"
+                        "Do not add commentary."
                     ),
                 },
                 {"role": "user", "content": st.session_state.reviewed_draft},
@@ -415,7 +423,8 @@ if st.session_state.reviewed_draft:
                     "role": "system",
                     "content": (
                         "You are a meticulous supervisor reviewing the translated reply in\n"
-                        f"{tgt} language. Improve wording for accuracy and tone. \n"
+                        f"{tgt} language. Improve wording for accuracy and tone **but do not change the structure**:\n"
+                        "every paragraph break and the greeting line must stay where it is.\n"
                         "Return only the improved version, nothing else. You must not change the language."
                     ),
                 },
