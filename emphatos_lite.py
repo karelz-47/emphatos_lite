@@ -33,30 +33,34 @@ def _(key: str) -> str:
     return _trans.get(key, key)
 
 # ─────────────────────────────────────────────
-# Flag selector – simple <a> links with PNG icons
+# Flag selector – PNG icons, same-tab navigation
 # ─────────────────────────────────────────────
 FLAGS = {"en": "gb", "sk": "sk", "it": "it", "hu": "hu"}
 DEFAULT_LANG = "en"
 
-# read current language from the URL
 current_lang = st.query_params.get("lang", DEFAULT_LANG)
 
 with st.container():
     flag_cols = st.columns(len(FLAGS))
 
     for (code, iso), col in zip(FLAGS.items(), flag_cols):
-        border = "2px solid #1f77ff" if code == current_lang else "1px solid rgba(0,0,0,.15)"
+        border = (
+            "2px solid #1f77ff" if code == current_lang
+            else "1px solid rgba(0,0,0,.15)"
+        )
 
         col.markdown(
             f"""
-            <a href="?lang={code}" style="display:inline-block">
+            <a href="?lang={code}" target="_self" style="display:inline-block">
                 <img src="https://flagcdn.com/w40/{iso}.png"
                      style="width:32px;height:24px;object-fit:cover;
-                            border:{border};border-radius:6px;display:block;margin:auto;" />
+                            border:{border};border-radius:6px;
+                            display:block;margin:auto;" />
             </a>
             """,
             unsafe_allow_html=True,
         )
+
 
 
     # hide the blank Streamlit button chrome
