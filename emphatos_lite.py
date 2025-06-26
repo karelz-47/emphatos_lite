@@ -34,21 +34,17 @@ def _(key):
 
 # Language selector
 flag_cols = st.columns(len(FLAGS))
-
 for i, (code, cc) in enumerate(FLAGS.items()):
     with flag_cols[i]:
-        if st.button(
-            label="",
-            key=f"flag_{code}",
-            help=code.upper(),
-        ):
-            st.query_params["lang"] = code
-            st.rerun()
-
-        st.image(
-            f"https://flagcdn.com/w40/{cc}.png",  # 40px wide flag
-            width=40,
-            caption=code.upper()
+        # Clickable image via HTML
+        st.markdown(
+            f"""
+            <a href="?lang={code}">
+                <img src="https://flagcdn.com/w40/{cc}.png" width="40" style="border-radius:6px;" />
+            </a>
+            <div style="text-align:center; margin-top:0.2rem;">{code.upper()}</div>
+            """,
+            unsafe_allow_html=True
         )
 
 # ──────────────────────────────────────────────────────────────
