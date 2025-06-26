@@ -34,7 +34,7 @@ def _(key):
 # Language selector
 flag_cols = st.columns(len(FLAGS))
 for i, (code, flag) in enumerate(FLAGS.items()):
-    if flag_cols[i].button(flag, key=f"flag_{code}"):
+    if flag_cols[i].button(label=flag, key=f"flag_{code}"):
         st.query_params["lang"] = code
         st.rerun()
 
