@@ -63,21 +63,6 @@ with st.container():
 
 
 
-    # hide the blank Streamlit button chrome
-    st.markdown(
-        """
-        <style>
-        div[data-testid="stButton"] > button {
-            background: transparent;
-            border: none;
-            padding: 0;
-            height: 24px; width: 32px;
-        }
-        </style>
-        """,
-        unsafe_allow_html=True,
-    )
-
 # ──────────────────────────────────────────────────────────────
 # App meta
 # ──────────────────────────────────────────────────────────────
