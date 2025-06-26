@@ -33,7 +33,7 @@ def _(key: str) -> str:
     return _trans.get(key, key)
 
 # ─────────────────────────────────────────────────────────────
-# Flag selector – image itself is clickable, same-tab reload
+# Flag selector – same-tab navigation via <a target="_self">
 # ─────────────────────────────────────────────────────────────
 FLAGS = {"en": "gb", "sk": "sk", "it": "it", "hu": "hu"}
 DEFAULT_LANG = "en"
@@ -42,17 +42,18 @@ current_lang = st.query_params.get("lang", DEFAULT_LANG)
 flag_cols = st.columns(len(FLAGS))
 for (code, iso), col in zip(FLAGS.items(), flag_cols):
     border = "2px solid #1f77ff" if code == current_lang else "1px solid rgba(0,0,0,.15)"
-    # JS sets window.location.search → same-tab language switch
     col.markdown(
         f"""
-        <img src="https://flagcdn.com/w40/{iso}.png"
-             style="width:32px;height:24px;object-fit:cover;
-                    border:{border};border-radius:6px;display:block;margin:auto;
-                    cursor:pointer;"
-             onclick="window.location.search='?lang={code}'" />
+        <a href="?lang={code}" target="_self" style="text-decoration:none;">
+            <img src="https://flagcdn.com/w40/{iso}.png"
+                 style="width:32px;height:24px;object-fit:cover;
+                        border:{border};border-radius:6px;
+                        display:block;margin:auto;" />
+        </a>
         """,
         unsafe_allow_html=True
     )
+
 
 
 # ──────────────────────────────────────────────────────────────
