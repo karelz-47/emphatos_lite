@@ -9,6 +9,9 @@ from streamlit.components.v1 import html
 FLAGS = {
     "en": "gb",   # 🇬🇧
     "sk": "sk",   # 🇸🇰
+    "de": "de",   # 🇩🇪
+    "is": "is",   # 🇮🇸
+    "hu": "hu",   # 🇭🇺
     "it": "it",   # 🇮🇹
     "hu": "hu"    # 🇭🇺
 }
@@ -35,7 +38,7 @@ def _(key: str) -> str:
 # ─────────────────────────────────────────────
 # Flag selector – PNG icons, same-tab navigation
 # ─────────────────────────────────────────────
-FLAGS = {"en": "gb", "sk": "sk", "it": "it", "hu": "hu"}
+FLAGS = {"en": "gb", "sk": "sk", "it": "it", "hu": "hu", "de": "de", "is": "is"}
 DEFAULT_LANG = "en"
 
 current_lang = st.query_params.get("lang", DEFAULT_LANG)
@@ -302,7 +305,8 @@ if st.button(_("BTN_GENERATE"), key="btn_generate"):
 
         target_lang_name = {
             "en": "English", "sk": "Slovak",
-            "it": "Italian", "hu": "Hungarian"
+            "it": "Italian", "hu": "Hungarian",
+            "de": "German", "is": "Icelandic",
         }[current_lang]
 
         channel_instr += f"\nAlways write the final reply in {target_lang_name}."
