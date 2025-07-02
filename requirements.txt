@@ -1,11 +1,15 @@
-# ── Core libraries ──────────────────────────────────────────
-streamlit>=1.33          # UI + re-run handling
-openai>=1.14             # chat completions / function calling
+# ── Core libraries ───────────────────────────
+streamlit==1.46.1          # first Streamlit version whose deps ship cp312 wheels
+openai==1.30.1             # stable 1.x series
 
-# ── Optional, but usually helpful ───────────────────────────
-python-dotenv>=1.0       # load OPENAI_API_KEY from a .env file locally
-tiktoken>=0.6            # token counting / safe truncation (needed if you later add usage bars)
+# ── Optional helpers ─────────────────────────
+python-dotenv>=1.0,<2.0    # load .env locally
+tiktoken==0.8.1            # cp312 wheel available
 
-# ── Exact versions of transitive deps (optional pins) ───────
-pydantic>=2.7            # OpenAI client’s model validation
-requests>=2.32           # HTTP transport for OpenAI
+# ── Wheel-pins for Python 3.12 ───────────────
+pyarrow==16.1.0            # earliest version with cp312 wheel
+watchdog>=4,<5             # 4.x has wheels for cp311 & cp312
+
+# ── Dependency safety nets ───────────────────
+pydantic>=2.7,<3.0
+requests>=2.32,<3.0
