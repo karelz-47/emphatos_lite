@@ -1,15 +1,17 @@
-# ── Core libraries ───────────────────────────
-streamlit==1.46.1          # first Streamlit version whose deps ship cp312 wheels
-openai==1.30.1             # stable 1.x series
+# ── Core ───────────────────────────
+streamlit==1.45.2        # still ships cp39/310/311 wheels
+openai==1.30.1
 
-# ── Optional helpers ─────────────────────────
-python-dotenv>=1.0,<2.0    # load .env locally
-tiktoken==0.8.1            # cp312 wheel available
+# ── Helpers ────────────────────────
+python-dotenv>=1.0,<2.0  # local .env support
 
-# ── Wheel-pins for Python 3.12 ───────────────
-pyarrow==16.1.0            # earliest version with cp312 wheel
-watchdog>=4,<5             # 4.x has wheels for cp311 & cp312
+# ── LLM-related ────────────────────
+tiktoken==0.6.0          # wheels for cp39-cp311, no Rust build needed
 
-# ── Dependency safety nets ───────────────────
+# ── Streamlit deps needing wheels ──
+pyarrow==15.0.2          # last version with small wheels for all Py3
+watchdog>=4,<5           # 4.x ships wheels
+
+# ── General safety pins ────────────
 pydantic>=2.7,<3.0
 requests>=2.32,<3.0
