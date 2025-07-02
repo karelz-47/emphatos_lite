@@ -1,17 +1,17 @@
-# ── Core ───────────────────────────
-streamlit==1.45.2        # still ships cp39/310/311 wheels
+# ── Core ──────────────────────────────
+streamlit==1.46.1          # last stable, wheels for py39-311
 openai==1.30.1
 
-# ── Helpers ────────────────────────
-python-dotenv>=1.0,<2.0  # local .env support
+# ── Helpers ───────────────────────────
+python-dotenv>=1.0,<2.0
 
-# ── LLM-related ────────────────────
-tiktoken==0.6.0          # wheels for cp39-cp311, no Rust build needed
+# ── LLM / tokeniser ───────────────────
+tiktoken==0.8.0            # wheels for py39-311
 
-# ── Streamlit deps needing wheels ──
-pyarrow==15.0.2          # last version with small wheels for all Py3
-watchdog>=4,<5           # 4.x ships wheels
+# ── Streamlit transitive deps needing wheels ──
+pyarrow==16.1.0            # first version with py311 wheels
+watchdog>=4,<5             # 4.x wheels cover py39-311
 
-# ── General safety pins ────────────
+# ── General safety pins ───────────────
 pydantic>=2.7,<3.0
 requests>=2.32,<3.0
