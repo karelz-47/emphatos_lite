@@ -1,6 +1,5 @@
 # nixpacks.toml — tells Railway’s Nixpacks how to launch the service
 [start]
 cmd = "streamlit run emphatos_lite.py --server.port=$PORT --server.address=0.0.0.0"
-toml 
 [variables] 
 NIXPACKS_SKIP_VENV = "true" 
